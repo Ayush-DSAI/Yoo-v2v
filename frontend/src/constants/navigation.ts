@@ -1,55 +1,52 @@
 import { NavigationItem } from '../types/layout';
-import { 
-  LayoutDashboard, 
-  Map, 
-  FileText, 
-  ShieldCheck, 
-  UserPlus, 
-  BarChart3, 
-  Settings 
+import {
+  LayoutDashboard,
+  Map,
+  FileText,
+  ShieldCheck,
+  UserPlus,
+  BarChart3,
+  Settings,
+  Radio,
+  Shield,
 } from 'lucide-react';
 
+export interface NavigationGroup {
+  label: string;
+  items: NavigationItem[];
+}
+
 export const SIDEBAR_NAVIGATION: NavigationItem[] = [
+  { id: 'dashboard', title: 'Command Center', href: '/', icon: LayoutDashboard },
+  { id: 'safe-routes', title: 'Safe Routes', href: '/safe-routes', icon: Map },
+  { id: 'reports', title: 'Reports', href: '/reports', icon: FileText },
+  { id: 'safe-spaces', title: 'Safe Spaces', href: '/safe-spaces', icon: ShieldCheck },
+  { id: 'guardian', title: 'Guardian', href: '/guardian', icon: UserPlus },
+  { id: 'analytics', title: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { id: 'settings', title: 'Settings', href: '/settings', icon: Settings },
+];
+
+export const SIDEBAR_NAVIGATION_GROUPED: NavigationGroup[] = [
   {
-    id: 'dashboard',
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
+    label: 'OPERATIONS',
+    items: [
+      { id: 'dashboard', title: 'Command Center', href: '/', icon: LayoutDashboard },
+      { id: 'safe-routes', title: 'Safe Routes', href: '/safe-routes', icon: Map },
+      { id: 'safe-spaces', title: 'Safe Spaces', href: '/safe-spaces', icon: Shield },
+    ],
   },
   {
-    id: 'safe-routes',
-    title: 'Safe Routes',
-    href: '/safe-routes',
-    icon: Map,
+    label: 'INTELLIGENCE',
+    items: [
+      { id: 'reports', title: 'Reports', href: '/reports', icon: FileText },
+      { id: 'analytics', title: 'Analytics', href: '/analytics', icon: BarChart3 },
+      { id: 'guardian', title: 'Guardian Net', href: '/guardian', icon: Radio },
+    ],
   },
   {
-    id: 'reports',
-    title: 'Reports',
-    href: '/reports',
-    icon: FileText,
-  },
-  {
-    id: 'safe-spaces',
-    title: 'Safe Spaces',
-    href: '/safe-spaces',
-    icon: ShieldCheck,
-  },
-  {
-    id: 'guardian',
-    title: 'Guardian',
-    href: '/guardian',
-    icon: UserPlus,
-  },
-  {
-    id: 'analytics',
-    title: 'Analytics',
-    href: '/analytics',
-    icon: BarChart3,
-  },
-  {
-    id: 'settings',
-    title: 'Settings',
-    href: '/settings',
-    icon: Settings,
+    label: 'SYSTEM',
+    items: [
+      { id: 'settings', title: 'Settings', href: '/settings', icon: Settings },
+    ],
   },
 ];

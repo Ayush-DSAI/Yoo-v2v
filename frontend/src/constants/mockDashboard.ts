@@ -1,0 +1,183 @@
+import { DashboardData } from '../types/dashboard';
+
+export const mockDashboardData: DashboardData = {
+  safetyScore: {
+    score: 94,
+    maxScore: 100,
+    trend: 2.3,
+    trendPeriod: '7d',
+    confidence: 96,
+    lastUpdated: new Date().toISOString(),
+  },
+  threatLevel: {
+    level: 32,
+    severity: 'moderate',
+    label: 'MODERATE',
+  },
+  missionBrief: {
+    brief: 'Based on 47 data signals and 12 community reports in the last hour, Avenue 4 presents a 34% lower risk than your default route. Three verified safe spaces along this path. Confidence: 96%.',
+    explanation: 'AI model v3.2 detected suspicious activity near Sector 7.',
+    confidence: 96,
+    riskReduction: 34,
+    eta: '12min',
+    signalsProcessed: 47,
+    actionLabel: 'Apply Safe Route',
+  },
+  guardians: [
+    {
+      id: 'g1',
+      name: 'Sarah Jenkins',
+      avatarUrl: 'https://i.pravatar.cc/150?img=32',
+      status: 'active',
+      eta: 'Following route',
+      lastSync: 'Live',
+    },
+    {
+      id: 'g2',
+      name: 'Michael Torres',
+      avatarUrl: 'https://i.pravatar.cc/150?img=44',
+      status: 'standby',
+      lastSync: '2m ago',
+    },
+  ],
+  weather: {
+    temperature: 68,
+    unit: 'F',
+    condition: 'Light Rain',
+    visibility: 'Low Visibility',
+    alert: {
+      type: 'warning',
+      message: 'Caution',
+    },
+  },
+  timeline: [
+    {
+      id: 't1',
+      type: 'ai',
+      title: 'Suspicious activity flagged',
+      detail: 'Sector 7 • AI Confidence 94%',
+      timestamp: '3m ago',
+      iconType: 'alert',
+    },
+    {
+      id: 't2',
+      type: 'community',
+      title: 'Safe Space verified: Central Library',
+      detail: 'Community verified • 12 upvotes',
+      timestamp: '15m ago',
+      iconType: 'safe',
+    },
+    {
+      id: 't3',
+      type: 'system',
+      title: 'Route recalculated — safer path found',
+      detail: 'Risk reduced by 34%',
+      timestamp: '28m ago',
+      iconType: 'route',
+    },
+    {
+      id: 't4',
+      type: 'system',
+      title: 'AI model v3.2 deployed',
+      detail: 'Global threat prediction accuracy +2.1%',
+      timestamp: '1h ago',
+      iconType: 'update',
+    },
+  ],
+  mapData: {
+    markers: [
+      { id: 'm1', x: '22%', y: '35%', type: 'threat', label: 'Suspicious Activity' },
+      { id: 'm2', x: '68%', y: '52%', type: 'threat', label: 'Low Visibility Zone' },
+      { id: 'm3', x: '45%', y: '72%', type: 'threat', label: 'Reported Incident' },
+      { id: 'm4', x: '35%', y: '28%', type: 'safe', icon: 'Shield', label: 'Police Station' },
+      { id: 'm5', x: '72%', y: '30%', type: 'safe', icon: 'Hospital', label: 'City Hospital' },
+      { id: 'm6', x: '55%', y: '45%', type: 'safe', icon: 'Shield', label: 'Fire Dept' },
+      { id: 'm7', x: '28%', y: '65%', type: 'safe', icon: 'Radio', label: 'Comm Hub' },
+    ],
+    heatmaps: [
+      { x: '18%', y: '25%', radius: 200, severity: 'critical' },
+      { x: '60%', y: '45%', radius: 150, severity: 'moderate' },
+      { x: '30%', y: '55%', radius: 180, severity: 'low' },
+    ],
+    route: [
+      { x: 15, y: 80 }, { x: 25, y: 68 }, { x: 35, y: 55 },
+      { x: 48, y: 48 }, { x: 60, y: 40 }, { x: 72, y: 35 },
+      { x: 82, y: 25 },
+    ],
+  },
+  quickActions: [
+    { id: 'q1', label: 'Safe Route', icon: 'Navigation', type: 'primary' },
+    { id: 'q2', label: 'Report', icon: 'ShieldAlert', type: 'danger' },
+    { id: 'q3', label: 'Safe Space', icon: 'MapPin', type: 'safe' },
+    { id: 'q4', label: 'Guardians', icon: 'UserPlus', type: 'secondary' },
+  ],
+  recentReports: [
+    {
+      id: 'r1',
+      author: 'Alex Chen',
+      avatarUrl: 'https://i.pravatar.cc/150?img=11',
+      type: 'Suspicious Activity',
+      location: 'Sector 7, North St',
+      timeAgo: '12m ago',
+      severity: 'moderate',
+      upvotes: 4,
+      verified: true,
+    },
+    {
+      id: 'r2',
+      author: 'Maya S.',
+      avatarUrl: 'https://i.pravatar.cc/150?img=22',
+      type: 'Streetlight Out',
+      location: 'Oak Ave & 4th',
+      timeAgo: '1h ago',
+      severity: 'low',
+      upvotes: 12,
+      verified: true,
+    },
+  ],
+  activeAlerts: [
+    {
+      id: 'a1',
+      type: 'weather',
+      message: 'Heavy rain expected in 15 mins. Visibility low.',
+      severity: 'moderate',
+      timestamp: '5m ago',
+    },
+    {
+      id: 'a2',
+      type: 'security',
+      message: 'Suspicious individual reported near 5th Ave.',
+      severity: 'high',
+      timestamp: '12m ago',
+    }
+  ],
+  safeSpaces: [
+    {
+      id: 's1',
+      name: 'Central Library',
+      type: 'Public Building',
+      distance: '0.4 mi',
+      capacity: 'High',
+      isVerified: true,
+    },
+    {
+      id: 's2',
+      name: 'Police Station 9',
+      type: 'Law Enforcement',
+      distance: '1.2 mi',
+      capacity: 'High',
+      isVerified: true,
+    }
+  ],
+  communityStats: {
+    activeReporters: 156,
+    reportsToday: 42,
+    trustScore: 98,
+    trendingArea: 'Sector 7',
+  },
+  systemStatus: {
+    isLive: true,
+    activeFeeds: 3,
+    version: '2.0.3',
+  },
+};
