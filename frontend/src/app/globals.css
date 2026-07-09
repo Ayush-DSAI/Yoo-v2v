@@ -1,26 +1,214 @@
 @import "tailwindcss";
 
+/* ============================================================================
+   1. THEME VARIABLES
+   ============================================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Colors - Light Theme Fallback */
+  --color-primary: #3B82F6;
+  --color-secondary: #00F2FE;
+  --color-background: #F9FAFB;
+  --color-surface: #FFFFFF;
+  --color-text: #111827;
+  --color-muted: #6B7280;
+  --color-safe: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-sos: #EF4444;
+
+  /* Fonts (configured dynamically by layout.tsx variables) */
+  --font-body: var(--font-body);
+  --font-display: var(--font-display);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+
+  /* Motion and Transition Settings */
+  --transition-standard: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dark Theme Default */
+.dark, :root {
+  --color-primary: #3B82F6;
+  --color-secondary: #00F2FE;
+  --color-background: #070A13;
+  --color-surface: #0D1222;
+  --color-text: #F3F4F6;
+  --color-muted: #9CA3AF;
+  --color-safe: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-sos: #EF4444;
+
+  --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 24px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.35);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-muted);
+  --color-safe: var(--color-safe);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-sos: var(--color-sos);
+
+  --font-body: var(--font-body), sans-serif;
+  --font-display: var(--font-display), sans-serif;
+
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-xxl: var(--space-xxl);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-modal: var(--shadow-modal);
+  --shadow-glow: var(--shadow-glow);
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* ============================================================================
+   2. BASE STYLES
+   ============================================================================ */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #FFFFFF;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface);
+  border: 2px solid var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* ============================================================================
+   3. UTILITIES
+   ============================================================================ */
+.glass {
+  background: rgba(13, 18, 34, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: rgba(19, 27, 50, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.glass-card:hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  transform: translateY(-2px);
+}
+
+.page-container {
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #00F2FE 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-padding {
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

@@ -19,11 +19,6 @@ export function useMediaQuery(query: string): boolean {
     if (typeof window === 'undefined') return;
 
     const media = window.matchMedia(query);
-    
-    // Set matching state immediately on mount if it differs from default initial state
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
 
     const listener = (e: MediaQueryListEvent) => {
       setMatches(e.matches);

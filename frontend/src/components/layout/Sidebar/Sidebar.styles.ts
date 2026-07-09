@@ -1,0 +1,15 @@
+export const sidebarStyles = {
+  overlay: 'fixed inset-0 bg-background/80 backdrop-blur-sm z-[var(--z-modal)] lg:hidden transition-opacity duration-300',
+  container: 'fixed top-0 bottom-0 left-0 w-[var(--sidebar-width)] z-[var(--z-modal)] lg:z-[var(--z-sidebar)] lg:top-[var(--header-height)] bg-surface border-r border-border transition-transform duration-300 flex flex-col',
+  open: 'translate-x-0',
+  closed: '-translate-x-full lg:translate-x-0',
+  header: 'h-[var(--header-height)] flex items-center justify-between px-6 lg:hidden border-b border-border',
+  logoText: 'text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent',
+  closeButton: 'p-2 -mr-2 rounded-md hover:bg-surface text-text focus-visible:ring-2 focus-visible:ring-primary outline-none',
+  nav: 'flex-1 overflow-y-auto py-6 px-4 space-y-1',
+  link: 'flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary text-text hover:bg-background hover:text-primary',
+  linkActive: 'bg-primary/10 text-primary',
+  icon: 'w-5 h-5 flex-shrink-0',
+  footer: 'p-4 border-t border-border',
+  logoutButton: 'flex w-full items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors text-text hover:bg-danger/10 hover:text-danger focus-visible:ring-2 focus-visible:ring-danger outline-none',
+};

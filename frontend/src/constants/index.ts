@@ -1,9 +1,65 @@
-export * from './colors';
-export * from './typography';
-export * from './spacing';
-export * from './shadows';
-export * from './animations';
-export * from './layout';
-export * from './breakpoints';
-export * from './map';
-export * from './status';
+export {
+  AEGIS_COLORS,
+  PRIMITIVES,
+  THEME_DICTIONARIES,
+  STATUS_COLORS,
+  AI_COLORS,
+  MAP_COLORS,
+  GRADIENTS,
+  TAILWIND_COLORS,
+} from './colors';
+
+export { SPACING } from './spacing';
+export { TYPOGRAPHY } from './typography';
+
+export {
+  AEGIS_LAYOUT,
+  BORDER_RADIUS,
+  Z_INDEX,
+  HEADER_CONFIG,
+  FOOTER_CONFIG,
+  SIDEBAR_CONFIG,
+  MODAL_CONFIG,
+  DRAWER_CONFIG,
+  LAYOUT_DIMENSIONS,
+  SEMANTIC_RADIUS,
+  DASHBOARD_COMPONENTS,
+  MOBILE_SAFETY_CONSTRAINTS,
+  ACCESSIBILITY_TOKENS,
+  LAYOUT_VARIABLES,
+  TAILWIND_RADIUS,
+  TAILWIND_Z_INDEX,
+  TAILWIND_LAYOUT,
+} from './layout';
+
+export {
+  AEGIS_MOTION,
+  DURATION_VALUES,
+  TAILWIND_DURATION_MAP,
+  EASING_VALUES,
+  TAILWIND_EASING_MAP,
+  TRANSITION_PRESETS,
+  TRANSFORM_VALUES,
+  COMPONENT_MOTION,
+} from './animations';
+
+export { RADIUS } from './radius';
+export { SHADOWS } from './shadows';
+export { STATUS } from './status';
+
+export {
+  AEGIS_BREAKPOINTS,
+  BREAKPOINT_VALUES,
+  BREAKPOINT_CSS,
+  TAILWIND_SCREENS,
+  MEDIA_QUERIES,
+  ORIENTATION_QUERIES,
+  ACCESSIBILITY_QUERIES,
+  Responsive as CLIENT_HELPERS,
+} from './breakpoints';
+
+export { ICONS } from './icons';
+export { THEME_CONFIG } from './theme';
+export { COMPONENT_TOKENS } from './componentTokens';
+export * from './navigation';
+

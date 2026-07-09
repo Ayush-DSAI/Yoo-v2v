@@ -1,0 +1,23 @@
+import React from 'react';
+
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  | 'success'
+  | 'gradient'
+  | 'glass'
+  | 'link';
+
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  loading?: boolean;
+  fullWidth?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+}

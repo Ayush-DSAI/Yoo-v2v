@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type BreakpointKey } from '../constants/breakpoints';
+import { type BreakpointKey } from '../contents/breakpoints';
 
 /**
  * SSR-safe React hook that returns the currently active responsive breakpoint.
