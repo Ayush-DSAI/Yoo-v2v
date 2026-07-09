@@ -35,7 +35,7 @@ create table if not exists public.reports (
   user_id     uuid not null references auth.users(id) on delete cascade,
   title       text not null,
   description text,
-  category    text not null,                  -- e.g. "harassment", "theft", "poor_lighting"
+  hazard_type text not null,                  -- e.g. "harassment", "theft", "poor_lighting"
   latitude    double precision not null,
   longitude   double precision not null,
   image_url   text,                           -- URL in Supabase Storage reports-images bucket

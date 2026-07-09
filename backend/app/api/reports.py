@@ -1,64 +1,88 @@
 """
-GET  /api/reports — Fetch incident reports (for map markers)
-POST /api/reports — Submit a new incident report with optional image upload
+Crowdsourced Reports Engine
+GET  /  — Public list of all incident reports (for map markers)
+POST /  — Authenticated: submit a new report with optional image upload
+
+Mounted in main.py as:
+    app.include_router(reports.router, prefix="/api/reports")
 """
 
 import logging
 import uuid
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
-from pydantic import BaseModel, Field
-from typing import Optional
+from datetime import datetime, timezone
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+    status,
+)
+from pydantic import BaseModel
+from typing import Optional, List
+
 from app.middleware.auth import get_current_user
 from app.database.supabase_client import get_supabase
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 
 
-# ── Response Models ───────────────────────────────────────────────────────────
+# ── Response Model ────────────────────────────────────────────────────────────
 
 class ReportOut(BaseModel):
     id: str
     user_id: str
     title: str
     description: Optional[str] = None
-    category: str
+    hazard_type: str
     latitude: float
     longitude: float
-    image_url: Optional[str] = None
+    image_url: Optional[str] = None  # Fixed: Pydantic models require serializable types, not UploadFile
     status: str
     created_at: str
 
 
-# ── Endpoints ─────────────────────────────────────────────────────────────────
+# ── GET / — Public: list all reports ──────────────────────────────────────────
 
 @router.get(
-    "/api/reports",
-    response_model=list[ReportOut],
+    "/",
+    response_model=List[ReportOut],
     summary="Get all incident reports",
     tags=["Reports"],
 )
-async def get_reports(current_user: dict = Depends(get_current_user)):
+async def get_reports():
     """
-    Returns all incident reports from Supabase ordered by created_at desc.
-    Used by the frontend to render map markers.
+    Publicly accessible — no auth required.
+    Fetches every report from Supabase ordered by created_at DESC.
+    Used by the frontend map to render incident markers.
     """
     supabase = get_supabase()
 
     try:
-        # TODO: Add spatial filtering (e.g. bounding box) for large datasets
-        response = supabase.table("reports").select("*").order("created_at", desc=True).execute()
+        response = (
+            supabase.table("reports")
+            .select("*")
+            .order("created_at", desc=True)
+            .execute()
+        )
         return response.data
     except Exception as e:
         logger.error(f"Failed to fetch reports: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch reports")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch reports",
+        )
 
+
+# ── POST / — Authenticated: create a new report ──────────────────────────────
 
 @router.post(
-    "/api/reports",
+    "/",
     response_model=ReportOut,
     status_code=status.HTTP_201_CREATED,
     summary="Submit a new incident report",
@@ -66,56 +90,66 @@ async def get_reports(current_user: dict = Depends(get_current_user)):
 )
 async def create_report(
     title: str = Form(..., min_length=3, max_length=200),
-    description: Optional[str] = Form(None, max_length=1000),
-    category: str = Form(..., description="e.g. harassment, theft, poor_lighting"),
+    description: str = Form("", max_length=2000),
     latitude: float = Form(..., ge=-90, le=90),
     longitude: float = Form(..., ge=-180, le=180),
-    image: Optional[UploadFile] = File(None, description="Optional incident photo (JPEG/PNG/WebP, max 5MB)"),
+    hazard_type: str = Form(..., description="e.g. harassment, theft, poor_lighting"),
+    image: UploadFile = File(default=None, description="Optional incident photo"),
     current_user: dict = Depends(get_current_user),
 ):
     """
-    Accepts multipart/form-data. Optionally uploads image to Supabase Storage
-    (reports-images bucket) before inserting the report row.
+    Accepts multipart/form-data.
+    Optionally uploads an image to the `reports-images` Supabase Storage bucket,
+    then inserts the report row into the `reports` table.
     """
     supabase = get_supabase()
     user_id = current_user["sub"]
     image_url: Optional[str] = None
 
-    # ── Image upload ──────────────────────────────────────────────────────────
+    # ── Image upload (optional) ───────────────────────────────────────────────
     if image is not None:
+        # Validate MIME type
         if image.content_type not in ALLOWED_IMAGE_TYPES:
             raise HTTPException(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-                detail=f"Unsupported image type: {image.content_type}. Allowed: JPEG, PNG, WebP",
+                detail=(
+                    f"Unsupported image type: {image.content_type}. "
+                    f"Allowed: {', '.join(ALLOWED_IMAGE_TYPES)}"
+                ),
             )
 
-        contents = await image.read()
-        if len(contents) > MAX_IMAGE_SIZE_BYTES:
-            raise HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                detail="Image file exceeds 5 MB limit",
-            )
-
+        # Generate a unique filename:  <user_id>/<timestamp>_<uuid>.<ext>
         extension = image.content_type.split("/")[-1]
-        filename = f"{user_id}/{uuid.uuid4()}.{extension}"
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+        filename = f"{user_id}/{timestamp}_{uuid.uuid4().hex[:8]}.{extension}"
 
         try:
+            contents = await image.read()
+
             supabase.storage.from_("reports-images").upload(
                 path=filename,
                 file=contents,
                 file_options={"content-type": image.content_type},
             )
+
             image_url = supabase.storage.from_("reports-images").get_public_url(filename)
+            logger.info(f"Image uploaded: {filename}")
+
         except Exception as e:
             logger.error(f"Failed to upload report image: {e}")
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Image upload failed")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Image upload failed",
+            )
+        finally:
+            await image.close()
 
-    # ── Insert report ─────────────────────────────────────────────────────────
+    # ── Insert report row ─────────────────────────────────────────────────────
     report_data = {
         "user_id": user_id,
         "title": title,
         "description": description,
-        "category": category,
+        "hazard_type": hazard_type,
         "latitude": latitude,
         "longitude": longitude,
         "image_url": image_url,
@@ -127,4 +161,7 @@ async def create_report(
         return response.data[0]
     except Exception as e:
         logger.error(f"Failed to insert report: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to save report")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to save report",
+        )
