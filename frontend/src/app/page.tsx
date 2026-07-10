@@ -14,11 +14,11 @@ export default function HomePage() {
               <span className="text-xl font-bold text-slate-900">AEGIS</span>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/login">
-                <Button variant="ghost">Sign In</Button>
+              <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                Sign In
               </Link>
               <Link href="/register">
-                <Button>Get Started</Button>
+                <Button>Sign Up</Button>
               </Link>
             </div>
           </div>
@@ -41,16 +41,14 @@ export default function HomePage() {
               Your intelligent safety companion that analyzes risks, connects you with help,
               and keeps you safe wherever you go.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Link href="/register">
                 <Button size="lg" className="h-12 px-8 text-lg bg-white text-blue-600 hover:bg-blue-50">
-                  Start Free Trial
+                  Sign Up
                 </Button>
               </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="h-12 px-8 text-lg border-white text-white hover:bg-white/10">
-                  Sign In
-                </Button>
+              <Link href="/login" className="text-lg font-medium text-white hover:text-blue-100 transition-colors">
+                Sign In
               </Link>
             </div>
           </div>
