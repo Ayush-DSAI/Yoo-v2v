@@ -50,50 +50,119 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/90 text-sm font-medium mb-6">
-              <AlertCircle className="h-4 w-4" />
-              AI-Powered Personal Safety
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Predict. Protect. Prevent.
-            </h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto mb-8">
-              Your intelligent safety companion that analyzes risks, connects you with help,
-              and keeps you safe wherever you go.
-            </p>
-            <div className="inline-flex items-center justify-center">
-              <div 
-                className="relative flex items-center gap-2 bg-white/10 p-1.5 rounded-xl backdrop-blur-sm border border-white/10"
-                onMouseLeave={() => setHeroHovered(null)}
-              >
-                {[
-                  { name: 'Sign Up', href: '/register' },
-                  { name: 'Sign In', href: '/login' },
-                ].map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="relative px-8 py-3 text-lg font-bold rounded-lg text-white transition-colors z-10"
-                    onMouseEnter={() => setHeroHovered(item.name)}
-                  >
-                    {heroHovered === item.name && (
-                      <motion.div
-                        layoutId="heroHover"
-                        className="absolute inset-0 bg-white rounded-lg -z-10"
-                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                      />
-                    )}
-                    <span className={heroHovered === item.name ? 'text-blue-600 transition-colors duration-200' : 'text-white'}>
-                      {item.name}
-                    </span>
-                  </Link>
-                ))}
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-slate-50 pt-24 lg:pt-32 pb-24 lg:pb-32">
+        {/* Soft background abstract blobs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl -z-10 animate-pulse" />
+        <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-indigo-400/20 rounded-full blur-3xl -z-10" style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+        <div className="absolute bottom-1/4 right-1/3 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl -z-10 animate-bounce" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            
+            {/* Left Column: Text & CTA */}
+            <div className="text-left space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-600 text-sm font-semibold tracking-wide">
+                <ShieldCheck className="h-4 w-4" />
+                AEGIS.SAFETY
+              </div>
+              <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 leading-tight">
+                Predict.<br />
+                Protect.<br />
+                Prevent.
+              </h1>
+              <p className="text-xl text-slate-600 max-w-lg">
+                Your intelligent safety companion that analyzes risks, connects you with help, and keeps you safe wherever you go.
+              </p>
+              
+              <div className="inline-flex items-center justify-start">
+                <div 
+                  className="relative flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-sm"
+                  onMouseLeave={() => setHeroHovered(null)}
+                >
+                  {[
+                    { name: 'Sign Up', href: '/register' },
+                    { name: 'Sign In', href: '/login' },
+                  ].map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="relative px-8 py-3 text-lg font-bold rounded-lg text-slate-600 transition-colors z-10"
+                      onMouseEnter={() => setHeroHovered(item.name)}
+                    >
+                      {heroHovered === item.name && (
+                        <motion.div
+                          layoutId="heroHover"
+                          className="absolute inset-0 bg-blue-600 rounded-lg -z-10 shadow-md"
+                          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                        />
+                      )}
+                      <span className={heroHovered === item.name ? 'text-white transition-colors duration-200' : 'text-slate-600'}>
+                        {item.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
+
+            {/* Right Column: Floating Interactive Mockups */}
+            <div className="relative h-[500px] lg:h-[600px] w-full hidden lg:block">
+              {/* Central gradient shape representing the abstract background in the mockup */}
+              <div className="absolute inset-4 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-[3rem] shadow-2xl opacity-90 transform rotate-3" />
+              
+              {/* SOS Alert Float */}
+              <motion.div 
+                className="absolute top-1/4 -left-12 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4 border border-slate-100"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">SOS Triggered</p>
+                  <p className="text-xs text-slate-500">Connecting to Guardians...</p>
+                </div>
+              </motion.div>
+
+              {/* Safety Score Float */}
+              <motion.div 
+                className="absolute top-1/2 -right-8 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4 border border-slate-100"
+                animate={{ y: [0, 15, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              >
+                <div className="h-12 w-12 rounded-full border-4 border-green-500 flex items-center justify-center">
+                  <span className="text-lg font-bold text-slate-900">98</span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">Safety Score</p>
+                  <p className="text-xs text-slate-500">Route is secure</p>
+                </div>
+              </motion.div>
+
+              {/* Chat Bubble Float */}
+              <motion.div 
+                className="absolute bottom-1/4 left-8 bg-blue-600 p-4 rounded-2xl rounded-bl-sm shadow-xl flex items-center gap-3 border border-blue-500"
+                animate={{ y: [0, -8, 0], x: [0, 5, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              >
+                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                  <ShieldCheck className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-sm font-medium text-white">"You've entered a Safe Zone"</p>
+              </motion.div>
+
+              {/* Map Marker Float */}
+              <motion.div 
+                className="absolute bottom-12 right-24 bg-white p-3 rounded-full shadow-xl border border-slate-100"
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              >
+                <MapPin className="h-8 w-8 text-purple-600" />
+              </motion.div>
+            </div>
+            
           </div>
         </div>
       </section>
