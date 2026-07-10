@@ -90,7 +90,7 @@ app.include_router(routes.router,      prefix="/api/routes")
 app.include_router(reports.router,    prefix="/api/reports")
 app.include_router(safe_spaces.router)
 app.include_router(sos.router,        prefix="/api/sos")
-app.include_router(analytics.router)
+app.include_router(analytics.router,  prefix="/api/analytics")
 
 # ── Health Check ──────────────────────────────────────────────────────────────
 

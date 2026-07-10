@@ -1,10 +1,16 @@
 """
-GET /api/analytics — Returns aggregated safety statistics for the dashboard.
+Analytics Engine — Real Database Metrics
+GET /  — Authenticated: returns live dashboard stats from Supabase
+
+Mounted in main.py as:
+    app.include_router(analytics.router, prefix="/api/analytics")
 """
 
 import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+
 from app.middleware.auth import get_current_user
 from app.database.supabase_client import get_supabase
 
@@ -14,49 +20,64 @@ router = APIRouter()
 
 # ── Response Model ────────────────────────────────────────────────────────────
 
-class AnalyticsResponse(BaseModel):
-    reports: int
-    safeSpaces: int
-    avgScore: int
-    highRiskAreas: int
+class DashboardStatsOut(BaseModel):
+    total_reports: int
+    active_sos_alerts: int
+    total_safe_spaces: int
 
 
-# ── Endpoint ──────────────────────────────────────────────────────────────────
+# ── GET / — Authenticated: real-time dashboard stats ──────────────────────────
 
 @router.get(
-    "/api/analytics",
-    response_model=AnalyticsResponse,
+    "/",
+    response_model=DashboardStatsOut,
     summary="Get dashboard analytics summary",
     tags=["Analytics"],
 )
 async def get_analytics(current_user: dict = Depends(get_current_user)):
     """
-    Returns aggregated statistics for the AEGIS safety dashboard.
-    Computes counts from Supabase tables.
-    TODO: Cache this response (e.g. 5-min TTL) to avoid repeated DB hits.
+    Returns live counts from Supabase:
+    - total_reports:      all rows in `reports`
+    - active_sos_alerts:  rows in `sos` where status = 'critical'
+    - total_safe_spaces:  all rows in `safe_spaces`
     """
     supabase = get_supabase()
 
     try:
-        # Count total reports
-        reports_resp = supabase.table("reports").select("id", count="exact").execute()
+        # Count all reports
+        reports_resp = (
+            supabase.table("reports")
+            .select("*", count="exact")
+            .execute()
+        )
         total_reports = reports_resp.count or 0
 
-        # Count safe spaces
-        spaces_resp = supabase.table("safe_spaces").select("id", count="exact").execute()
-        total_spaces = spaces_resp.count or 0
-
-        # TODO: Replace with real aggregation from an analytics table or RPC
-        # Placeholder values until the analytics table/RPC is implemented
-        avg_score = 81
-        high_risk_areas = 5
-
-        return AnalyticsResponse(
-            reports=total_reports,
-            safeSpaces=total_spaces,
-            avgScore=avg_score,
-            highRiskAreas=high_risk_areas,
+        # Count active (critical) SOS alerts
+        sos_resp = (
+            supabase.table("sos")
+            .select("*", count="exact")
+            .eq("status", "critical")
+            .execute()
         )
+        active_sos_alerts = sos_resp.count or 0
+
+        # Count all safe spaces
+        spaces_resp = (
+            supabase.table("safe_spaces")
+            .select("*", count="exact")
+            .execute()
+        )
+        total_safe_spaces = spaces_resp.count or 0
+
+        return DashboardStatsOut(
+            total_reports=total_reports,
+            active_sos_alerts=active_sos_alerts,
+            total_safe_spaces=total_safe_spaces,
+        )
+
     except Exception as e:
         logger.error(f"Failed to compute analytics: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch analytics")
+        raise HTTPException(
+            status_code=500,
+            detail=f"SUPABASE ANALYTICS QUERY FAILED: {str(e)}",
+        )
