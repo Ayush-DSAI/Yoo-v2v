@@ -1,19 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getSupabaseToken } from '@/lib/supabase/authHelper';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Loader } from '@/components/ui/Loader';
 import { MapPin, Navigation, Sparkles, ShieldCheck, AlertTriangle, TrendingUp, RotateCcw } from 'lucide-react';
-import LocationAutocomplete from '@/components/LocationAutocomplete';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const DEV_JWT = process.env.NEXT_PUBLIC_DEV_JWT || '';
 
 interface RouteAnalysis {
-  score: number;
-  risk: string;
-  explanation: string[];
-  recommendation?: string;
+  safety_score: number;
+  risk_level: string;
+  explanation: string;
 }
 
 function RiskBadge({ level }: { level: string }) {
@@ -28,9 +29,8 @@ function RiskBadge({ level }: { level: string }) {
 
 function ScoreRing({ score }: { score: number }) {
   const clamped = Math.max(0, Math.min(100, score));
-  // Score 72 is moderate, so we use yellow/orange warning color.
   const color =
-    clamped >= 80 ? '#22c55e' : clamped >= 60 ? '#f97316' : '#ef4444';
+    clamped >= 70 ? '#22c55e' : clamped >= 40 ? '#eab308' : '#ef4444';
   const circumference = 2 * Math.PI * 44;
   const offset = circumference - (clamped / 100) * circumference;
 
@@ -52,7 +52,7 @@ function ScoreRing({ score }: { score: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-black text-slate-900" style={{ color }}>{clamped}</span>
+        <span className="text-3xl font-black text-slate-900">{clamped}</span>
         <span className="text-xs text-slate-500 font-medium">/ 100</span>
       </div>
     </div>
@@ -60,28 +60,11 @@ function ScoreRing({ score }: { score: number }) {
 }
 
 export default function RouteAIPage() {
-  const [currentLocation, setCurrentLocation] = useState<[number, number]>([20.2961, 85.8245]);
   const [srcText, setSrcText] = useState('');
   const [dstText, setDstText] = useState('');
-
-  const [sourcePos, setSourcePos] = useState<[number, number] | null>(null);
-  const [destinationPos, setDestinationPos] = useState<[number, number] | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RouteAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Retrieve user coordinates on mount for location-based search biasing
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setCurrentLocation([pos.coords.latitude, pos.coords.longitude]);
-        },
-        () => console.warn('Failed to retrieve user location. Defaulting to Bhubaneswar map anchor.')
-      );
-    }
-  }, []);
 
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -90,26 +73,23 @@ export default function RouteAIPage() {
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setSourcePos([lat, lng]);
-        setSrcText(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+        setSrcText(`${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`);
       },
       () => alert("Failed to get current location."),
       { timeout: 5000, enableHighAccuracy: true }
     );
   };
 
-  const geocodeAddress = async (query: string): Promise<[number, number]> => {
+  const geocodeAddress = async (query: string) => {
     if (/^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(query)) {
       const [lat, lng] = query.split(',').map(s => parseFloat(s.trim()));
-      return [lat, lng];
+      return { lat, lng };
     }
     const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`);
     if (!res.ok) throw new Error('Geocoding API failed');
     const data = await res.json();
     if (data.length === 0) throw new Error(`Address not found: ${query}`);
-    return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
   };
 
   const handleAnalyze = async (e: React.FormEvent) => {
@@ -123,28 +103,36 @@ export default function RouteAIPage() {
     setError(null);
     setResult(null);
 
-    // Simulate 2.5 seconds loading state
-    setTimeout(() => {
-      setResult({
-        score: 72,
-        risk: "Moderate",
-        explanation: [
-          "The primary route via Patia Station Road passes through a generally well-lit corridor, but real-time crowdsourced data indicates isolated dark patches near the railway overbridge.",
-          "Historical data shows a 40% drop in pedestrian foot traffic in this specific segment after 8:30 PM."
-        ],
-        recommendation: "We recommend taking the slight detour via Nandankanan Main Road. While it adds 4 minutes to your ETA, it maintains 95% street-light coverage and passes two verified 24/7 Safe Spaces (KIIT Police Station and Apollo Pharmacy)."
+    try {
+      const source = await geocodeAddress(srcText);
+      const destination = await geocodeAddress(dstText);
+
+      const res = await fetch(`${API_URL}/api/routes/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${DEV_JWT}`,
+        },
+        body: JSON.stringify({ source, destination }),
       });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Backend error ${res.status}: ${text}`);
+      }
+
+      const json: RouteAnalysis = await res.json();
+      setResult(json);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Analysis failed');
+    } finally {
       setLoading(false);
-    }, 2500);
+    }
   };
 
   const reset = () => {
     setResult(null);
     setError(null);
-    setSrcText('');
-    setDstText('');
-    setSourcePos(null);
-    setDestinationPos(null);
   };
 
   return (
@@ -152,7 +140,7 @@ export default function RouteAIPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-purple-600 font-bold" />
+          <Sparkles className="h-6 w-6 text-purple-600" />
           AI Route Analyzer
         </h1>
         <p className="text-slate-500">
@@ -183,7 +171,7 @@ export default function RouteAIPage() {
               {/* Source */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-slate-700 flex items-center gap-1.5 font-sans">
+                  <label className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
                     <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                     Source Location
                   </label>
@@ -192,25 +180,19 @@ export default function RouteAIPage() {
                     variant="ghost"
                     size="sm"
                     onClick={useCurrentLocation}
-                    className="text-xs text-blue-600 h-7 px-2 hover:bg-slate-50"
+                    className="text-xs text-blue-600 h-7"
                   >
                     <MapPin className="h-3 w-3 mr-1" />
                     Use my location
                   </Button>
                 </div>
                 <div className="grid grid-cols-1">
-                  <LocationAutocomplete
-                    currentPosition={currentLocation}
+                  <Input
+                    type="text"
+                    placeholder="Enter an address (e.g. City Center)"
                     value={srcText}
-                    onChange={(val) => {
-                      setSrcText(val);
-                      if (sourcePos) setSourcePos(null); // Clear position key if modified manually
-                    }}
-                    onSelect={(lat, lon, name) => {
-                      setSourcePos([lat, lon]);
-                      setSrcText(name);
-                    }}
-                    placeholder="Search source address..."
+                    onChange={(e) => setSrcText(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -224,30 +206,23 @@ export default function RouteAIPage() {
 
               {/* Destination */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-slate-700 flex items-center gap-1.5 font-sans">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
                   <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
                   Destination Location
                 </label>
                 <div className="grid grid-cols-1">
-                  <LocationAutocomplete
-                    currentPosition={currentLocation}
+                  <Input
+                    type="text"
+                    placeholder="Enter destination address"
                     value={dstText}
-                    onChange={(val) => {
-                      setDstText(val);
-                      if (destinationPos) setDestinationPos(null);
-                    }}
-                    onSelect={(lat, lon, name) => {
-                      setDestinationPos([lat, lon]);
-                      setDstText(name);
-                    }}
-                    placeholder="Search destination address..."
+                    onChange={(e) => setDstText(e.target.value)}
+                    required
                   />
                 </div>
               </div>
 
-              <Button type="submit" className="w-full flex items-center justify-center gap-2" disabled={loading}>
-                {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-                {!loading && <Sparkles className="h-4 w-4" />}
+              <Button type="submit" className="w-full" loading={loading}>
+                <Sparkles className="h-4 w-4 mr-2" />
                 Analyze Route Safety
               </Button>
             </form>
@@ -255,7 +230,7 @@ export default function RouteAIPage() {
         </Card>
 
         {/* Result card */}
-        <Card className={result ? 'border-blue-200 shadow-md' : ''}>
+        <Card className={result ? 'border-blue-200' : ''}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShieldCheck className="h-5 w-5" />
@@ -266,66 +241,50 @@ export default function RouteAIPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col items-center justify-center h-48 gap-4">
-                <div className="w-10 h-10 border-4 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-slate-500 animate-pulse">Analyzing route with Mistral AI...</p>
+                <Loader size="lg" />
+                <p className="text-sm text-slate-500 animate-pulse">Analyzing route data…</p>
               </div>
             ) : result ? (
               <div className="space-y-6">
                 {/* Score ring */}
                 <div className="text-center space-y-2">
-                  <ScoreRing score={result.score} />
-                  <p className="text-sm font-medium text-slate-650">Safety Score</p>
+                  <ScoreRing score={result.safety_score} />
+                  <p className="text-sm font-medium text-slate-600">Safety Score</p>
                 </div>
 
                 {/* Risk level badge */}
-                <div className="flex items-center justify-between p-4 rounded-lg bg-slate-50 border border-slate-100">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-slate-50">
                   <div className="flex items-center gap-2">
-                    {result.score >= 80 ? (
+                    {result.safety_score >= 70 ? (
                       <TrendingUp className="h-5 w-5 text-green-600" />
                     ) : (
-                      <AlertTriangle className="h-5 w-5 text-orange-600 animate-bounce" />
+                      <AlertTriangle className="h-5 w-5 text-orange-600" />
                     )}
-                    <span className="text-sm font-medium text-slate-700 font-sans">Risk Level</span>
+                    <span className="text-sm font-medium text-slate-700">Risk Level</span>
                   </div>
-                  <RiskBadge level={result.risk} />
+                  <RiskBadge level={result.risk_level} />
                 </div>
 
                 {/* AI explanation */}
                 <div className="space-y-2">
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-slate-700 font-sans">
-                    <Sparkles className="h-4 w-4 text-purple-600 font-semibold" />
-                    AI Explanations
+                  <div className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
+                    <Sparkles className="h-4 w-4 text-purple-600" />
+                    AI Explanation
                   </div>
-                  <ul className="text-sm text-slate-600 bg-slate-50 border border-slate-100 rounded-lg p-4 space-y-3 leading-relaxed">
-                    {result.explanation.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5">
-                        <AlertTriangle className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-slate-600 bg-slate-50 rounded-lg p-4 leading-relaxed">
+                    {result.explanation}
+                  </p>
                 </div>
 
-                {/* Detour Recommendation */}
-                {result.recommendation && (
-                  <div className="rounded-lg bg-emerald-50/70 border border-emerald-200 p-4 text-emerald-900 space-y-1.5 shadow-sm">
-                    <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-emerald-800 font-sans">
-                      <ShieldCheck className="h-4.5 w-4.5 text-emerald-600" />
-                      AI Safety Routing Advice
-                    </div>
-                    <p className="text-sm leading-relaxed font-sans">{result.recommendation}</p>
-                  </div>
-                )}
-
-                <Button variant="outline" className="w-full flex items-center justify-center gap-2" onClick={reset}>
-                  <RotateCcw className="h-4 w-4" />
+                <Button variant="outline" className="w-full" onClick={reset}>
+                  <RotateCcw className="h-4 w-4 mr-2" />
                   Analyze Another Route
                 </Button>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-48 gap-3 text-slate-400">
                 <Sparkles className="h-12 w-12 text-slate-200" />
-                <p className="text-sm">Enter coordinates and click Analyze Route Safety</p>
+                <p className="text-sm">Enter coordinates and click Analyze</p>
               </div>
             )}
           </CardContent>

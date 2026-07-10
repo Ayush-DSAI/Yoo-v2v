@@ -43,7 +43,6 @@ export const safeSpaceTypes = [
   { id: 'hospital', label: 'Hospital', icon: 'hospital' },
   { id: 'police', label: 'Police Station', icon: 'shield' },
   { id: 'pharmacy', label: 'Pharmacy', icon: 'pill' },
-  { id: 'metro', label: 'Metro Station', icon: 'train' },
   { id: 'hostel', label: 'Hostel', icon: 'home' },
   { id: 'women_help', label: 'Women Help Center', icon: 'heart' },
 ] as const;

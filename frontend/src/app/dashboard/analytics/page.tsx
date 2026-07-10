@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -78,36 +79,36 @@ export default function AnalyticsPage() {
 
   const statCards = data
     ? [
-        {
-          title: 'Total Reports',
-          value: data.total_reports,
-          icon: FileText,
-          color: 'text-orange-600',
-          bgColor: 'bg-orange-50',
-          badge: null,
-        },
-        {
-          title: 'Active SOS Alerts',
-          value: data.active_sos_alerts,
-          icon: AlertCircle,
-          color: 'text-red-600',
-          bgColor: 'bg-red-50',
-          badge:
-            data.active_sos_alerts > 0 ? (
-              <Badge variant="destructive" className="animate-pulse">
-                LIVE
-              </Badge>
-            ) : null,
-        },
-        {
-          title: 'Total Safe Spaces',
-          value: data.total_safe_spaces,
-          icon: Shield,
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          badge: null,
-        },
-      ]
+      {
+        title: 'Total Reports',
+        value: data.total_reports,
+        icon: FileText,
+        color: 'text-orange-600',
+        bgColor: 'bg-orange-50',
+        badge: null,
+      },
+      {
+        title: 'Active SOS Alerts',
+        value: data.active_sos_alerts,
+        icon: AlertCircle,
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        badge:
+          data.active_sos_alerts > 0 ? (
+            <Badge variant="destructive" className="animate-pulse">
+              LIVE
+            </Badge>
+          ) : null,
+      },
+      {
+        title: 'Total Safe Spaces',
+        value: data.total_safe_spaces,
+        icon: Shield,
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+        badge: null,
+      },
+    ]
     : [];
 
   return (

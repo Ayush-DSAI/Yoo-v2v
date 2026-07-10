@@ -50,10 +50,38 @@ export default function ReportsPage() {
     setListLoading(true);
     setListError(null);
     try {
-      const res = await fetch(`${API_URL}/api/reports`);
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
-      const json: Report[] = await res.json();
-      setReports(json);
+      setReports([
+        {
+          id: 'mock-inc-1',
+          description: 'Reported mobile snatching incident near commercial street.',
+          category: 'theft',
+          address: 'Commercial Street, Bhubaneswar',
+          latitude: 20.2900,
+          longitude: 85.8200,
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+          status: 'investigating'
+        },
+        {
+          id: 'mock-inc-2',
+          description: 'Streetlights are non-functional for the past three days.',
+          category: 'lighting',
+          address: 'Capital Hospital Road, Bhubaneswar',
+          latitude: 20.3000,
+          longitude: 85.8300,
+          created_at: new Date(Date.now() - 7200000).toISOString(),
+          status: 'investigating'
+        },
+        {
+          id: 'mock-inc-3',
+          description: 'Group of loiterers blocking the sidewalk at evening hours.',
+          category: 'harassment',
+          address: 'Saheed Nagar, Bhubaneswar',
+          latitude: 20.3050,
+          longitude: 85.8150,
+          created_at: new Date(Date.now() - 14400000).toISOString(),
+          status: 'investigating'
+        }
+      ]);
     } catch (err) {
       setListError(err instanceof Error ? err.message : 'Failed to load reports');
     } finally {
@@ -76,41 +104,33 @@ export default function ReportsPage() {
     setFormLoading(true);
     setFormError(null);
 
-    try {
-      const formData = new FormData();
-      formData.append('category', formCategory);
-      formData.append('description', formDescription);
-      if (formAddress) formData.append('address', formAddress);
-      if (formImage) formData.append('image', formImage);
-
-      const res = await fetch(`${API_URL}/api/reports`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${DEV_JWT}` },
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Backend error ${res.status}: ${text}`);
-      }
-
+    // Simulate network delay of 1500ms
+    setTimeout(() => {
       setFormSuccess(true);
+      setFormLoading(false);
       setFormCategory('');
       setFormDescription('');
       setFormAddress('');
       setFormImage(null);
 
-      // Refresh the list
-      await fetchReports();
+      // Append locally to preview list
+      const newReport: Report = {
+        id: `mock-user-${Date.now()}`,
+        description: formDescription,
+        category: formCategory,
+        address: formAddress || 'Bhubaneswar Central',
+        latitude: 20.2961 + (Math.random() - 0.5) * 0.02,
+        longitude: 85.8245 + (Math.random() - 0.5) * 0.02,
+        created_at: new Date().toISOString(),
+        status: 'investigating'
+      };
+      setReports((prev) => [newReport, ...prev]);
+
       setTimeout(() => {
         setFormSuccess(false);
         setShowForm(false);
-      }, 2000);
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Failed to submit report');
-    } finally {
-      setFormLoading(false);
-    }
+      }, 3000);
+    }, 1500);
   };
 
   // ── Filter logic ──────────────────────────────────────────────────────────
@@ -157,9 +177,9 @@ export default function ReportsPage() {
           </CardHeader>
           <CardContent>
             {formSuccess ? (
-              <div className="flex flex-col items-center gap-3 py-8 text-green-600">
+              <div className="flex flex-col items-center gap-3 py-8 text-green-600 text-center">
                 <CheckCircle className="h-12 w-12" />
-                <p className="font-semibold">Report submitted successfully!</p>
+                <p className="font-semibold text-lg text-emerald-800">✅ Report submitted successfully. Thank you for keeping the community safe.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmitReport} className="space-y-4">

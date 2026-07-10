@@ -15,8 +15,15 @@ const api = axios.create({
 
 // Automatically attach JWT
 api.interceptors.request.use((config) => {
-  const token = process.env.NEXT_PUBLIC_DEV_JWT;
-  
+  let token = process.env.NEXT_PUBLIC_DEV_JWT;
+
+  if (typeof window !== 'undefined') {
+    const localToken = localStorage.getItem('token') || localStorage.getItem('sb-access-token');
+    if (localToken) {
+      token = localToken;
+    }
+  }
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
