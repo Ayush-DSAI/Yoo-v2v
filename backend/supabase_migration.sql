@@ -99,7 +99,8 @@ create table if not exists public.sos (
   user_id     uuid not null references auth.users(id) on delete cascade,
   latitude    double precision not null,
   longitude   double precision not null,
-  audio_url   text not null,                  -- URL in Supabase Storage sos-audio bucket
+  audio_url   text,                            -- URL in Supabase Storage sos-audio bucket (nullable)
+  status      text not null default 'critical', -- critical | resolved
   created_at  timestamptz default now() not null
 );
 
