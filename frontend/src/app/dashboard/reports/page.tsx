@@ -129,8 +129,7 @@ export default function ReportsPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Incident Reports</h1>
           <p className="text-slate-500">
-            Live data from{' '}
-            <span className="font-medium text-blue-600">GET /api/reports</span>
+            Live crowdsourced safety data and incidents
           </p>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>

@@ -116,8 +116,7 @@ export default function AnalyticsPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Analytics</h1>
           <p className="text-slate-500">
-            Real-time safety insights from{' '}
-            <span className="font-medium text-blue-600">GET /api/analytics</span>
+            Real-time safety insights and data
           </p>
         </div>
         <Button
