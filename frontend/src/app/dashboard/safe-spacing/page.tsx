@@ -148,8 +148,7 @@ export default function RouteAIPage() {
           AI Route Analyzer
         </h1>
         <p className="text-slate-500">
-          Powered by Mistral AI via{' '}
-          <span className="font-medium text-blue-600">POST /api/routes/analyze</span>
+          Get real-time safety scores based on historical data and AI analysis
         </p>
       </div>
 
@@ -259,13 +258,13 @@ export default function RouteAIPage() {
               <ShieldCheck className="h-5 w-5" />
               Safety Analysis
             </CardTitle>
-            <CardDescription>Mistral AI will evaluate the route and return a score</CardDescription>
+            <CardDescription>Our AI will evaluate the route and return a safety score</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="flex flex-col items-center justify-center h-48 gap-4">
                 <Loader size="lg" />
-                <p className="text-sm text-slate-500 animate-pulse">Consulting Mistral AI…</p>
+                <p className="text-sm text-slate-500 animate-pulse">Analyzing route data…</p>
               </div>
             ) : result ? (
               <div className="space-y-6">
