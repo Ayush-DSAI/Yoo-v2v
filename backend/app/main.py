@@ -94,7 +94,13 @@ app.include_router(analytics.router,  prefix="/api/analytics")
 
 # ── Health Check ──────────────────────────────────────────────────────────────
 
+@app.get("/", tags=["Health"], summary="Root health check")
+async def root():
+    """Render pings GET / by default to verify the server is alive."""
+    return {"status": "ok", "service": "AEGIS API", "version": "1.0.0"}
+
+
 @app.get("/health", tags=["Health"], summary="Health check")
 async def health():
-    """Render deployment health ping."""
+    """Alternate health endpoint."""
     return {"status": "ok", "service": "AEGIS API", "version": "1.0.0"}
