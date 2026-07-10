@@ -1,8 +1,15 @@
+'use client';
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Shield, AlertCircle, MapPin, ShieldCheck, TrendingUp, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export default function HomePage() {
+  const [navHovered, setNavHovered] = useState<string | null>(null);
+  const [heroHovered, setHeroHovered] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen">
       {/* Navigation */}
@@ -13,13 +20,30 @@ export default function HomePage() {
               <ShieldCheck className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-slate-900">AEGIS</span>
             </div>
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-                Sign In
-              </Link>
-              <Link href="/register">
-                <Button>Sign Up</Button>
-              </Link>
+            <div 
+              className="relative flex items-center gap-1 bg-slate-100/80 p-1 rounded-full border border-slate-200/50"
+              onMouseLeave={() => setNavHovered(null)}
+            >
+              {[
+                { name: 'Sign In', href: '/login' },
+                { name: 'Sign Up', href: '/register' },
+              ].map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="relative px-4 py-1.5 text-sm font-semibold rounded-full text-slate-600 hover:text-slate-900 transition-colors z-10"
+                  onMouseEnter={() => setNavHovered(item.name)}
+                >
+                  {navHovered === item.name && (
+                    <motion.div
+                      layoutId="navHover"
+                      className="absolute inset-0 bg-white rounded-full shadow-sm -z-10"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  {item.name}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -41,15 +65,34 @@ export default function HomePage() {
               Your intelligent safety companion that analyzes risks, connects you with help,
               and keeps you safe wherever you go.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link href="/register">
-                <Button size="lg" className="h-12 px-8 text-lg bg-white text-blue-600 hover:bg-blue-50">
-                  Sign Up
-                </Button>
-              </Link>
-              <Link href="/login" className="text-lg font-medium text-white hover:text-blue-100 transition-colors">
-                Sign In
-              </Link>
+            <div className="inline-flex items-center justify-center">
+              <div 
+                className="relative flex items-center gap-2 bg-white/10 p-1.5 rounded-xl backdrop-blur-sm border border-white/10"
+                onMouseLeave={() => setHeroHovered(null)}
+              >
+                {[
+                  { name: 'Sign Up', href: '/register' },
+                  { name: 'Sign In', href: '/login' },
+                ].map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="relative px-8 py-3 text-lg font-bold rounded-lg text-white transition-colors z-10"
+                    onMouseEnter={() => setHeroHovered(item.name)}
+                  >
+                    {heroHovered === item.name && (
+                      <motion.div
+                        layoutId="heroHover"
+                        className="absolute inset-0 bg-white rounded-lg -z-10"
+                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                      />
+                    )}
+                    <span className={heroHovered === item.name ? 'text-blue-600 transition-colors duration-200' : 'text-white'}>
+                      {item.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
