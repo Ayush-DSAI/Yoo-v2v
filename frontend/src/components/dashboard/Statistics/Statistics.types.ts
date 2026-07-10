@@ -1,4 +1,4 @@
 export interface StatisticsProps {
-  data?: any;
+  data?: unknown;
   className?: string;
 }

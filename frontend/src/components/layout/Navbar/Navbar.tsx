@@ -1,93 +1,124 @@
 'use client';
 
-import React from 'react';
-import { NavbarProps } from './Navbar.types';
-import { navbarStyles } from './Navbar.styles';
-import { Globe, Bell, Moon, ShieldAlert, Menu, Search, Sparkles, Shield, Command } from 'lucide-react';
-import { Button } from '../../ui/Button';
-import { Input } from '../../ui/Input';
-import { Avatar } from '../../ui/Avatar';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { NavbarProps } from '../../../types/layout';
 
-export const Navbar: React.FC<NavbarProps> = ({ onMenuClick, className }) => {
+export const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen, className }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const notifications = 3;
+
   return (
-    <motion.header
-      initial={{ y: -72, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className={`${navbarStyles.header} ${className || ''}`}
-    >
-      <div className={navbarStyles.logoGroup}>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onMenuClick}
-          className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-surface/50 text-text focus-visible:ring-2 focus-visible:ring-primary outline-none"
-          aria-label="Toggle Sidebar"
-        >
-          <Menu className="w-5 h-5" />
-        </motion.button>
-        
-        {/* Brand */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-            <Shield className="w-4 h-4 text-white" />
+    <>
+      <header className={`fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm ${className || ''}`}>
+        <div className="flex items-center justify-between h-16 px-4 lg:px-6">
+          {/* Left Section - Logo & Search */}
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-bold text-gray-900">AEGIS</h1>
+                <p className="text-xs text-gray-500 -mt-1">Command Center</p>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="hidden lg:flex items-center ml-8">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search locations, alerts, users..."
+                  className="w-80 lg:w-96 pl-10 pr-4 py-2.5 bg-gray-100 border-0 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                />
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div className="hidden sm:flex flex-col">
-            <span className="text-lg font-extrabold tracking-tight font-outfit text-white leading-none">AEGIS</span>
-            <span className="text-[9px] text-text-muted/60 tracking-[0.2em] uppercase font-medium leading-none mt-0.5">Command Center</span>
+ 
+          {/* Right Section - Actions */}
+          <div className="flex items-center gap-2">
+            {/* Quick Actions */}
+            <button className="hidden lg:flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Quick Report
+            </button>
+
+            {/* Notifications */}
+            <button className="relative p-2.5 rounded-full hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {notifications > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {notifications}
+                </span>
+              )}
+            </button>
+
+            {/* Settings */}
+            <button className="hidden md:block p-2.5 rounded-full hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+ 
+            {/* Profile */}
+            <div className="hidden sm:flex items-center gap-3 ml-2 pl-2 border-l border-gray-200">
+              <div className="hidden lg:block text-right">
+                <p className="text-sm font-medium text-gray-900">Alex Morgan</p>
+                <p className="text-xs text-gray-500">Security Admin</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                AM
+              </div>
+            </div>
+ 
+            {/* SOS Button */}
+            <button className="ml-1 sm:ml-2 flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-linear-to-r from-red-500 to-red-600 text-white font-semibold rounded-full hover:from-red-600 hover:to-red-700 transition-all shadow-lg shadow-red-200 hover:shadow-red-300">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span className="hidden xs:inline sm:inline">SOS</span>
+            </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Search Bar */}
-      <div className={navbarStyles.searchContainer}>
-        <div className="relative w-full">
-          <Input
-            placeholder="Search routes, reports, places..."
-            leftIcon={<Search className="w-4 h-4 text-text-muted" />}
-            rightIcon={
-              <kbd className="hidden lg:flex items-center gap-0.5 text-[10px] text-text-muted/50 bg-surface/50 px-1.5 py-0.5 rounded border border-white/10 font-mono">
-                <Command className="w-2.5 h-2.5" /> K
-              </kbd>
-            }
-            className="rounded-xl bg-surface/30 hover:bg-surface/50 transition-colors border-white/5 focus-within:border-primary/30 focus-within:shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+      {/* Mobile Search Overlay */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search..."
+            className="w-full pl-10 pr-4 py-3 bg-gray-100 border-0 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
         </div>
       </div>
-
-      <div className={navbarStyles.actionGroup}>
-        <motion.button whileHover={{ scale: 1.05, y: -1 }} whileTap={{ scale: 0.95 }} className={navbarStyles.iconButton} aria-label="AI Assistant">
-          <Sparkles className="w-4 h-4 text-primary" />
-        </motion.button>
-        <motion.button whileHover={{ scale: 1.05, y: -1 }} whileTap={{ scale: 0.95 }} className={navbarStyles.iconButton} aria-label="Language">
-          <Globe className="w-4 h-4" />
-        </motion.button>
-        <motion.button whileHover={{ scale: 1.05, y: -1 }} whileTap={{ scale: 0.95 }} className={navbarStyles.iconButton} aria-label="Toggle Theme">
-          <Moon className="w-4 h-4" />
-        </motion.button>
-        <motion.button whileHover={{ scale: 1.05, y: -1 }} whileTap={{ scale: 0.95 }} className={`${navbarStyles.iconButton} relative`} aria-label="Notifications">
-          <Bell className="w-4 h-4" />
-          {/* Notification dot */}
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-danger border border-background animate-pulse" />
-        </motion.button>
-
-        <motion.div whileHover={{ scale: 1.05 }} className="ml-1 sm:ml-2 hidden sm:block cursor-pointer">
-          <Avatar src="https://i.pravatar.cc/150?img=11" fallback="JD" size="sm" />
-        </motion.div>
-
-        <Button
-          variant="danger"
-          size="sm"
-          leftIcon={<ShieldAlert className="w-4 h-4" />}
-          className="ml-1 sm:ml-2 shadow-[0_0_20px_rgba(239,68,68,0.4)] font-outfit rounded-xl hover:shadow-[0_0_30px_rgba(239,68,68,0.6)]"
-          aria-label="Emergency SOS"
-        >
-          <span className="hidden sm:inline tracking-wider font-bold text-xs">SOS</span>
-        </Button>
-      </div>
-    </motion.header>
+    </>
   );
 };
-
-Navbar.displayName = 'Navbar';

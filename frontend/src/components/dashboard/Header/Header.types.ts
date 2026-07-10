@@ -1,4 +1,4 @@
 export interface HeaderProps {
-  data?: any;
+  data?: unknown;
   className?: string;
 }

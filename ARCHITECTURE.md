@@ -1,57 +1,150 @@
-# AEGIS System Architecture
+# AEGIS Architecture
 
-This document describes the high-level architecture of the AEGIS global protective intelligence platform.
+## Project Overview
 
-```mermaid
-graph TD
-    subgraph UI ["Client Layer (React / Next.js)"]
-        Pages["App Router Pages (/dashboard, /sos, etc.)"]
-        Components["Shared Components (/map, /voice, etc.)"]
-    end
+AEGIS (Predict. Protect. Prevent.) is an AI-powered web application that predicts safety risks, provides safe route recommendations, enables emergency SOS, and offers city safety analytics.
 
-    subgraph DesignSystem ["AEGIS Design System (@aegis/design-system)"]
-        Tokens["Tokens (/src/tokens)"]
-        Hooks["Client Hooks (/src/hooks)"]
-        Types["Type Contracts (/src/types)"]
-        Config["System Config (/src/config.ts)"]
-    end
+Frontend and backend are completely decoupled.
 
-    subgraph Services ["Application Services"]
-        Supabase["Supabase (Data Store / Auth)"]
-        GMaps["Google Maps API (Geospatial)"]
-        AIService["AI Analytics Engine (Threat Predicton)"]
-    end
+---
 
-    Pages --> Components
-    Components --> Hooks
-    Hooks --> Tokens
-    Components --> Config
-    Pages --> Services
-```
+# Tech Stack
 
-## Directory Structure
+Frontend
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- Supabase Auth
+- Google Maps JavaScript API
+- Zustand
+- React Query
+- Axios
 
-The project is structured as a monorepo workspace split into two main sections:
-1. **Workspace Root**: Orchestration configuration and documentation.
-2. **Frontend Subdirectory (`/frontend`)**: Next.js 16 Web Application.
+Backend
+- FastAPI
+- Supabase Database
+- Gemini AI
+- Whisper
+- Twilio
+- Render
 
-Inside `/frontend/src/`:
-- **`tokens/`**: Framework-agnostic static design variables (colors, motion, layout, breakpoints, spacing, typography). Free from React runtime imports.
-- **`hooks/`**: Reactive hooks adapting design tokens to client context (`useBreakpoint`, `useMediaQuery`).
-- **`types/`**: Strongly typed structural contracts.
-- **`app/`**: Next.js App Router folders matching the security application routes:
-  - `(auth)/login` & `(auth)/register`
-  - `dashboard` (Central monitor split)
-  - `reports` (Incident logs)
-  - `safe-spaces` (Safe zones database)
-  - `analytics` (Real-time threat charts)
-  - `settings` (System preferences)
-  - `sos` (Emergency control dispatch)
-  - `api` (Serverless backend handlers)
-- **`components/`**: Modular, highly reusable page-specific components separated by domain (`map`, `sos`, `voice`, `ui`, `layout`).
+Database
+- Supabase PostgreSQL
 
-## Design Principles
+Deployment
+- Frontend → Vercel
+- Backend → Render
+- Database → Supabase
 
-1. **Separation of Concerns**: Pure tokens are strictly isolated from React runtime, allowing them to be parsed by Tailwind, tests, and non-browser render contexts.
-2. **High-Performance Rendering**: Transition curves explicitly animate GPU-composited variables (`opacity`, `transform`) instead of triggering layout reflow properties (`width`, `height`).
-3. **Responsive Adaptive Viewports**: Breakpoint evaluations use `matchMedia` event listeners to delegate responsiveness to native Web APIs.
+---
+
+# High-Level Architecture
+
+User
+
+↓
+
+Next.js Frontend
+
+↓
+
+FastAPI API
+
+↓
+
+Gemini AI
+Supabase
+Whisper
+Twilio
+
+↓
+
+Database
+
+---
+
+# Frontend Architecture
+
+src/
+
+app/
+
+components/
+
+hooks/
+
+services/
+
+constants/
+
+lib/
+
+types/
+
+utils/
+
+assets/
+
+styles/
+
+---
+
+# Backend Architecture
+
+routers/
+
+services/
+
+middleware/
+
+models/
+
+schemas/
+
+utils/
+
+---
+
+# State Management
+
+Local UI State
+- Zustand
+
+Server State
+- React Query
+
+Authentication
+- Supabase
+
+---
+
+# Design Principles
+
+- Clean Architecture
+- DRY
+- SOLID
+- Feature-based organization
+- Modular components
+- Reusable UI
+- Strong typing
+- Mobile-first
+- Accessibility first
+
+---
+
+# Coding Philosophy
+
+Never duplicate business logic.
+
+Business logic belongs in services.
+
+Components should only render UI.
+
+Pages compose components.
+
+API calls belong inside services.
+
+Constants belong inside constants.
+
+Types belong inside types.

@@ -1,4 +1,4 @@
 export interface ChartsProps {
-  data?: any;
+  data?: unknown;
   className?: string;
 }

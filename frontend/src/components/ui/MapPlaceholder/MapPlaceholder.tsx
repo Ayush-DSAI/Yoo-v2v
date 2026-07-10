@@ -32,7 +32,7 @@ export const MapPlaceholder = () => {
   return (
     <div className="absolute inset-0 z-0 bg-[#060912] flex items-center justify-center overflow-hidden">
       {/* Grid background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.04)_1px,transparent_1px)] bg-[size:32px_32px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.04)_1px,transparent_1px)] bg-size-[32px_32px]" />
 
       {/* Heatmap zones */}
       <div className="absolute w-[200px] h-[200px] rounded-full bg-danger/10 blur-3xl" style={{ left: '18%', top: '25%' }} />
@@ -51,7 +51,7 @@ export const MapPlaceholder = () => {
 
       {/* Concentric boundary rings */}
       {[500, 380, 260, 140].map((size) => (
-        <div key={size} className="absolute rounded-full border border-white/[0.03]" style={{ width: size, height: size }} />
+        <div key={size} className="absolute rounded-full border border-white/3" style={{ width: size, height: size }} />
       ))}
 
       {/* AI recommended route (SVG overlay) */}

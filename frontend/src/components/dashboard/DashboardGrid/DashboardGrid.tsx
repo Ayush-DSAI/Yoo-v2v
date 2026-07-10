@@ -31,7 +31,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
         
-        const childElement = child as ReactElement<any>;
+        const childElement = child as ReactElement<{ className?: string }>;
         return (
           <motion.div
             key={index}

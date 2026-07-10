@@ -8,13 +8,13 @@ export interface NavigationItem {
 }
 
 export interface NavbarProps {
-  onMenuClick: () => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
   className?: string;
 }
 
 export interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isSidebarOpen: boolean;
   className?: string;
 }
 

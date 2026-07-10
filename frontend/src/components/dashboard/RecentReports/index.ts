@@ -1,2 +1,3 @@
 export * from './RecentReports';
-export * from './RecentReports.types';
+export * from './types';
+export { default } from './RecentReports';

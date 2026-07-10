@@ -1,32 +1,123 @@
-# AEGIS Global Protective Intelligence & Safety Platform
+# AEGIS
 
-AEGIS is an enterprise-grade protective intelligence platform combining real-time incident tracking, AI-driven threat analytics, safe routing layers, and responsive SOS dispatch.
+Predict. Protect. Prevent.
 
-## Core Features
+AEGIS is an AI-powered safety platform that predicts risk before emergencies occur.
 
-- **Split Dashboard Interface**: Dual maps and analytical dashboard panels.
-- **Dynamic Safe Routing**: Safe path calculations avoiding risk zones.
-- **Active SOS Control**: Fallback geolocation tracking and audio recorder interfaces.
-- **Design Token Adaptability**: Highly optimized, tree-shakable static tokens integrated with Tailwind.
+---
+
+## Features
+
+- AI Safety Score
+- Smart Route Analysis
+- Explainable AI
+- Community Reports
+- Verified Safe Spaces
+- Smart SOS
+- Voice Assistant
+- Multilingual Support
+- Guardian Dashboard
+- City Safety Analytics
+- Real-time Maps
+
+---
+
+## Tech Stack
+
+Frontend
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS
+
+Backend
+
+- FastAPI
+
+Database
+
+- Supabase
+
+AI
+
+- Gemini
+- Whisper
+
+Maps
+
+- Google Maps API
+
+Authentication
+
+- Supabase Auth
+
+Deployment
+
+Frontend
+
+Vercel
+
+Backend
+
+Render
+
+Database
+
+Supabase
+
+---
+
+## Project Structure
+
+src/
+
+app/
+
+components/
+
+hooks/
+
+services/
+
+constants/
+
+types/
+
+utils/
+
+lib/
+
+---
 
 ## Getting Started
 
-To run the project locally, install dependencies and start the development server from the workspace root:
+Install
 
-```bash
-# Install dependencies across the workspace
 npm install
 
-# Start the Next.js development server
+Run
+
 npm run dev
-```
 
-The application will launch on [http://localhost:3000](http://localhost:3000).
+Build
 
-## Repository Documentation
+npm run build
 
-For deeper context on architectural splits, layout systems, and code style rules, review:
-- [ARCHITECTURE.md](file:///d:/Projects/AEGIS/ARCHITECTURE.md): Structural layout and monorepo folders.
-- [API_CONTRACT.md](file:///d:/Projects/AEGIS/API_CONTRACT.md): Endpoint payloads and SSE streams.
-- [PROJECT_RULES.md](file:///d:/Projects/AEGIS/PROJECT_RULES.md): Formatting styles and motion standards.
-- [DESIGN_SYSTEM.md](file:///d:/Projects/AEGIS/DESIGN_SYSTEM.md): Token lists, easing bezier bounds, and HSL palettes.
+---
+
+## Team
+
+Member 1
+
+Frontend
+
+Member 2
+
+Backend
+
+---
+
+## License
+
+MIT

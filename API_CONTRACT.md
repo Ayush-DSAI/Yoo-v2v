@@ -1,120 +1,119 @@
-# AEGIS API & Data Contracts
+# AEGIS API Contract
 
-This document specifies the data contracts, types, and API schemas used across the AEGIS geospatial safety application.
+Base URL
 
-## 1. SOS & Emergency Dispatch
+/api
 
-### `POST /api/sos/trigger`
-Triggers an emergency alert, notifies contacts, and initiates location tracking.
+Authentication
 
-**Request Payload:**
-```typescript
-interface SOSTriggerRequest {
-  userId: string;
-  currentLocation: {
-    lat: number;
-    lng: number;
-    accuracy?: number;
-  };
-  triggerType: 'manual_button' | 'voice_activation' | 'fall_detection' | 'dead_man_switch';
-  timestamp: string; // ISO 8601
-}
-```
-
-**Response Scheme:**
-```typescript
-interface SOSTriggerResponse {
-  sosId: string;
-  status: 'active' | 'dispatched' | 'resolved';
-  activeGuardiansNotified: number;
-  emergencyServicesContacted: boolean;
-  trackingToken: string;
-}
-```
+Authorization: Bearer <Supabase JWT>
 
 ---
 
-## 2. Safe Spaces & Route Generation
+POST /routes/analyze
 
-### `POST /api/routes/calculate`
-Generates safe routes bypassing active threat zones, high-risk incident clusters, or low-light corridors.
+Request
 
-**Request Payload:**
-```typescript
-interface SafeRouteRequest {
-  origin: { lat: number; lng: number };
-  destination: { lat: number; lng: number };
-  profile: 'safety_first' | 'fastest_route' | 'well_lit_only';
-  riskTolerance: 0 | 1 | 2; // Low, Medium, High
+{
+  "source": "...",
+  "destination": "..."
 }
-```
 
-**Response Scheme:**
-```typescript
-interface SafeRouteResponse {
-  routes: Array<{
-    routeId: string;
-    type: 'safe' | 'fast' | 'alternative';
-    geometry: string; // Encoded polyline path
-    safetyScore: number; // 0 to 100
-    riskFactors: Array<{
-      type: 'poor_lighting' | 'reported_incident' | 'low_foot_traffic';
-      severity: 'low' | 'moderate' | 'high';
-      location: { lat: number; lng: number };
-    }>;
-    durationSeconds: number;
-    distanceMeters: number;
-  }>;
+Response
+
+{
+  "riskScore": 22,
+  "route": [],
+  "explanation": ""
 }
-```
 
 ---
 
-## 3. Incident Logging & Reports
+GET /reports
 
-### `POST /api/reports/submit`
-Logs a safety threat, hazard, or incident to feed the real-time heatmap.
+Response
 
-**Request Payload:**
-```typescript
-interface IncidentReportRequest {
-  reporterId: string;
-  category: 'theft' | 'harassment' | 'hazard' | 'poor_lighting' | 'accident' | 'other';
-  location: { lat: number; lng: number };
-  description: string;
-  timestamp: string; // ISO 8601
-  evidenceUrls?: string[]; // Supabase storage links
-  isAnonymous: boolean;
-}
-```
-
-**Response Scheme:**
-```typescript
-interface IncidentReportResponse {
-  reportId: string;
-  status: 'submitted' | 'verified' | 'dismissed';
-  severityIndex: number; // 1 to 5
-}
-```
+[
+  {
+    "id":"",
+    "title":"",
+    "type":"",
+    "location":"",
+    "createdAt":""
+  }
+]
 
 ---
 
-## 4. Real-time Threat Analysis (AI Feed)
+POST /reports
 
-### `GET /api/analytics/threat-stream`
-SSE (Server-Sent Events) endpoint pushing live threat scores and anomaly warnings.
+Request
 
-**Event Data Schema:**
-```typescript
-interface ThreatAnalyticsEvent {
-  zoneId: string;
-  overallThreatScore: number; // 0.0 to 1.0
-  activeIncidentsCount: number;
-  anomaliesDetected: Array<{
-    type: 'crowd_disruption' | 'route_deviation' | 'sudden_speed_change';
-    confidence: number; // 0.0 to 1.0
-    location: { lat: number; lng: number };
-  }>;
-  timestamp: string;
+{
+  "title":"",
+  "description":"",
+  "category":"",
+  "location":""
 }
-```
+
+---
+
+GET /safe-spaces
+
+Response
+
+[
+  {
+    "id":"",
+    "name":"",
+    "latitude":0,
+    "longitude":0,
+    "verified":true
+  }
+]
+
+---
+
+POST /sos
+
+Request
+
+multipart/form-data
+
+audio
+
+location
+
+Response
+
+{
+    "status":"success"
+}
+
+---
+
+GET /analytics
+
+Response
+
+{
+  "incidents":[],
+  "safeZones":[],
+  "riskTrend":[]
+}
+
+---
+
+HTTP Status
+
+200 Success
+
+201 Created
+
+400 Bad Request
+
+401 Unauthorized
+
+404 Not Found
+
+500 Server Error

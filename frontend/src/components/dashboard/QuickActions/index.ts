@@ -1,2 +1,3 @@
 export * from './QuickActions';
-export * from './QuickActions.types';
+export * from './types';
+export { default } from './QuickActions';

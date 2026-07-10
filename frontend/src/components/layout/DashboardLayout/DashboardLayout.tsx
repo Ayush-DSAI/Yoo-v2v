@@ -47,11 +47,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       className={dashboardLayoutStyles.root}
     >
       {/* 1. Fixed Navbar */}
-      <Navbar onMenuClick={toggle} />
+      <Navbar isSidebarOpen={isOpen} setIsSidebarOpen={isOpen ? close : toggle} />
       
       <div className={dashboardLayoutStyles.contentWrapper}>
         {/* 2. Fixed Sidebar */}
-        <Sidebar isOpen={isOpen} onClose={close} />
+        <Sidebar isSidebarOpen={isOpen} />
         
         {/* 3. Scrollable Main Content */}
         <main className={dashboardLayoutStyles.main}>
