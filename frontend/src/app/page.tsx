@@ -21,6 +21,14 @@ export default function HomePage() {
               <span className="text-2xl font-bold text-slate-900 tracking-tight">AEGIS</span>
             </div>
             
+            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+              <Link href="#overview" className="hover:text-slate-900 transition-colors">Overview</Link>
+              <Link href="#features" className="hover:text-slate-900 transition-colors">Features</Link>
+              <Link href="#community" className="hover:text-slate-900 transition-colors">Community</Link>
+              <Link href="#tech" className="hover:text-slate-900 transition-colors">Tech</Link>
+              <Link href="#resources" className="hover:text-slate-900 transition-colors">Resources</Link>
+            </div>
+
             <div className="flex items-center">
               <Link href="/register">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2 font-semibold shadow-md transition-all">
@@ -60,7 +68,7 @@ export default function HomePage() {
               <div className="pt-4">
                 <Link href="/register">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-8 py-6 text-lg font-bold shadow-lg transition-all transform hover:-translate-y-1">
-                    EXPLORE PROJECT
+                    Start Your Free Trial
                   </Button>
                 </Link>
               </div>
