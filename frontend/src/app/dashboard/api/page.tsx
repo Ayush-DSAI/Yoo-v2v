@@ -134,7 +134,7 @@ export default function HomePage() {
               <ShieldCheck className="h-6 w-6 text-white" />
               <span className="text-lg font-bold text-white">AEGIS</span>
             </div>
-            <p className="text-sm">© 2024 AEGIS. All rights reserved.</p>
+            <p className="text-sm">© 2026 AEGIS. All rights reserved.</p>
           </div>
         </div>
       </footer>
