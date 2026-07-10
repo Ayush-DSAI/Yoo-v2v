@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { MapPin, Navigation, Search, Layers } from 'lucide-react';
 
 export default function MapsPage() {
-  const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>({ lat: 40.7128, lng: -74.0060 });
   const [destination, setDestination] = useState('');
   const [mapLoaded, setMapLoaded] = useState(false);
 
@@ -19,15 +19,17 @@ export default function MapsPage() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
+          setMapLoaded(true);
         },
         () => {
-          setCurrentLocation({ lat: 40.7128, lng: -74.0060 });
-        }
+          // Keep default location if blocked or failed
+          setMapLoaded(true);
+        },
+        { timeout: 5000, enableHighAccuracy: true }
       );
     } else {
-      setCurrentLocation({ lat: 40.7128, lng: -74.0060 });
+      setMapLoaded(true);
     }
-    setMapLoaded(true);
   }, []);
 
   return (

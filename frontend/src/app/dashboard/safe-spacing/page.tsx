@@ -69,11 +69,26 @@ export default function RouteAIPage() {
   const [error, setError] = useState<string | null>(null);
 
   const useCurrentLocation = () => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition((pos) => {
-      setSrcLat(pos.coords.latitude.toFixed(6));
-      setSrcLng(pos.coords.longitude.toFixed(6));
-    });
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser or is restricted (non-secure HTTP context). Please enter coordinates manually.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setSrcLat(pos.coords.latitude.toFixed(6));
+        setSrcLng(pos.coords.longitude.toFixed(6));
+      },
+      (error) => {
+        let errMsg = "Failed to get current location.";
+        if (error.code === error.PERMISSION_DENIED) {
+          errMsg = "Location access denied. Please enable location permissions or enter coordinates manually.";
+        } else if (error.code === error.TIMEOUT) {
+          errMsg = "Location request timed out. Please enter coordinates manually.";
+        }
+        alert(errMsg);
+      },
+      { timeout: 5000, enableHighAccuracy: true }
+    );
   };
 
   const handleAnalyze = async (e: React.FormEvent) => {
