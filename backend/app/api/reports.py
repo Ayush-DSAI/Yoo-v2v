@@ -145,23 +145,22 @@ async def create_report(
             await image.close()
 
     # ── Insert report row ─────────────────────────────────────────────────────
-    report_data = {
-        "user_id": user_id,
-        "title": title,
-        "description": description,
-        "hazard_type": hazard_type,
-        "latitude": latitude,
-        "longitude": longitude,
-        "image_url": image_url,
-        "status": "active",
-    }
-
-    try:
-        response = supabase.table("reports").insert(report_data).execute()
-        return response.data[0]
-    except Exception as e:
-        logger.error(f"Failed to insert report: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to save report",
-        )
+        report_data = {
+                "title": title,
+                "description": description,
+                "latitude": latitude,
+                "longitude": longitude,
+                "hazard_type": hazard_type,
+                "image_url": image_url,
+                "user_id": user_id
+        }
+        
+        try:
+            db_response = supabase.table("reports").insert(report_data).execute()
+            return db_response.data[0]
+        except Exception as e:
+            # Forcing the raw Supabase error string into the Swagger UI response
+            raise HTTPException(
+                status_code=500, 
+                detail=f"SUPABASE DB REJECTED IT: {str(e)}"
+            )
