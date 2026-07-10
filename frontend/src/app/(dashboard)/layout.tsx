@@ -1,29 +1,18 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { DashboardLayout as Layout } from '@/components/layout/DashboardLayout';
 
-import { useState } from 'react';
-import { Sidebar } from "@/components/layout/Sidebar";
-import { Navbar } from "@/components/layout/Navbar";
-
-export default function DashboardLayout({
+export default async function DashboardRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('sb-access-token')?.value;
 
-  return (
-    <div className="min-h-screen bg-gray-50 text-slate-900 overflow-x-hidden relative">
-      <Navbar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-      <Sidebar isSidebarOpen={isSidebarOpen} />
-      {isSidebarOpen && (
-        <div 
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/30 z-30 lg:hidden"
-        />
-      )}
-      <main className="lg:ml-64 pt-16 min-h-screen min-w-0 overflow-x-hidden">
-        {children}
-      </main>
-    </div>
-  );
+  if (!sessionToken) {
+    redirect('/login');
+  }
+
+  return <Layout>{children}</Layout>;
 }

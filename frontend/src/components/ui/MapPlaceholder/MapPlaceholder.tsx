@@ -174,15 +174,15 @@ export const MapPlaceholder = () => {
 
       {/* Top-right map legend */}
       <div className="absolute top-4 right-4 z-30 flex flex-col gap-1.5">
-        <Badge variant="glass" size="sm" className="bg-surface/70 backdrop-blur-md border-white/10 shadow-lg text-[10px]">
+        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-surface/70 backdrop-blur-md border-white/10 shadow-lg text-[10px]">
           <span className="w-1.5 h-1.5 rounded-full bg-safe mr-1.5 inline-block" /> Safe Zone
-        </Badge>
-        <Badge variant="glass" size="sm" className="bg-surface/70 backdrop-blur-md border-white/10 shadow-lg text-[10px]">
+        </div>
+        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-surface/70 backdrop-blur-md border-white/10 shadow-lg text-[10px]">
           <span className="w-1.5 h-1.5 rounded-full bg-danger mr-1.5 inline-block" /> Threat
-        </Badge>
-        <Badge variant="glass" size="sm" className="bg-surface/70 backdrop-blur-md border-white/10 shadow-lg text-[10px]">
+        </div>
+        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-surface/70 backdrop-blur-md border-white/10 shadow-lg text-[10px]">
           <span className="w-1.5 h-1.5 rounded-full bg-primary mr-1.5 inline-block" /> AI Route
-        </Badge>
+        </div>
       </div>
 
       {/* Bottom-left connection status */}
@@ -192,11 +192,11 @@ export const MapPlaceholder = () => {
         transition={{ delay: 2 }}
         className="absolute bottom-4 left-4 z-30"
       >
-        <Badge variant="glass" className="bg-surface/70 backdrop-blur-md border-safe/20 shadow-lg gap-1.5">
+        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-surface/70 backdrop-blur-md border-safe/20 shadow-lg gap-1.5">
           <Wifi className="w-3 h-3 text-safe" />
           <span className="text-safe text-[10px] font-semibold">LIVE</span>
           <span className="text-text-muted text-[10px]">• 3 feeds active</span>
-        </Badge>
+        </div>
       </motion.div>
     </div>
   );

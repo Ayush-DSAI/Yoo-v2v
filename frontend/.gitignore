@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# imported UI reference (design source, not committed)
+/_imported_ui/node_modules
+/_imported_ui/.next

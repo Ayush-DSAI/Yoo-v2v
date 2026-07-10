@@ -1,3 +1,7 @@
+export * from './theme';
+export * from './navigation';
+export * from './status';
+
 export {
   AEGIS_COLORS,
   PRIMITIVES,
@@ -45,7 +49,7 @@ export {
 
 export { RADIUS } from './radius';
 export { SHADOWS } from './shadows';
-export { STATUS } from './status';
+
 
 export {
   AEGIS_BREAKPOINTS,
@@ -59,7 +63,6 @@ export {
 } from './breakpoints';
 
 export { ICONS } from './icons';
-export { THEME_CONFIG } from './theme';
 export { COMPONENT_TOKENS } from './componentTokens';
 export * from './navigation';
 

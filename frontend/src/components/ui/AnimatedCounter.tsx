@@ -1,34 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+'use client';
+
+import { useEffect, useState } from 'react';
 
 interface AnimatedCounterProps {
-  value: number;
+  end: number;
   duration?: number;
-  suffix?: string;
 }
 
-export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ value, duration = 1.5, suffix = '' }) => {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) => Math.round(latest));
+export function AnimatedCounter({ end, duration = 1 }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    const controls = animate(count, value, {
-      duration,
-      ease: 'easeOut',
-      onUpdate: (latest) => {
-        setDisplayValue(Math.round(latest));
+    const startTime = Date.now();
+
+    const animate = () => {
+      const now = Date.now();
+      const progress = Math.min((now - startTime) / (duration * 1000), 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      setDisplayValue(Math.round(end * eased));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
       }
-    });
-    return () => controls.stop();
-  }, [value, duration, count]);
+    };
 
-  return (
-    <span>
-      {displayValue}
-      {suffix}
-    </span>
-  );
-};
+    animate();
+  }, [end, duration]);
 
-export default AnimatedCounter;
+  return <span>{displayValue}</span>;
+}
