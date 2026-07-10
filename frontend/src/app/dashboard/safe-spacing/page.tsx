@@ -60,41 +60,42 @@ function ScoreRing({ score }: { score: number }) {
 }
 
 export default function RouteAIPage() {
-  const [srcLat, setSrcLat] = useState('');
-  const [srcLng, setSrcLng] = useState('');
-  const [dstLat, setDstLat] = useState('');
-  const [dstLng, setDstLng] = useState('');
+  const [srcText, setSrcText] = useState('');
+  const [dstText, setDstText] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RouteAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser or is restricted (non-secure HTTP context). Please enter coordinates manually.");
+      alert("Geolocation is not supported. Please enter address manually.");
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setSrcLat(pos.coords.latitude.toFixed(6));
-        setSrcLng(pos.coords.longitude.toFixed(6));
+        setSrcText(`${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`);
       },
-      (error) => {
-        let errMsg = "Failed to get current location.";
-        if (error.code === error.PERMISSION_DENIED) {
-          errMsg = "Location access denied. Please enable location permissions or enter coordinates manually.";
-        } else if (error.code === error.TIMEOUT) {
-          errMsg = "Location request timed out. Please enter coordinates manually.";
-        }
-        alert(errMsg);
-      },
+      () => alert("Failed to get current location."),
       { timeout: 5000, enableHighAccuracy: true }
     );
   };
 
+  const geocodeAddress = async (query: string) => {
+    if (/^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(query)) {
+      const [lat, lng] = query.split(',').map(s => parseFloat(s.trim()));
+      return { lat, lng };
+    }
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`);
+    if (!res.ok) throw new Error('Geocoding API failed');
+    const data = await res.json();
+    if (data.length === 0) throw new Error(`Address not found: ${query}`);
+    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  };
+
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!srcLat || !srcLng || !dstLat || !dstLng) {
-      setError('All four coordinate fields are required');
+    if (!srcText || !dstText) {
+      setError('Both source and destination addresses are required');
       return;
     }
 
@@ -103,21 +104,16 @@ export default function RouteAIPage() {
     setResult(null);
 
     try {
-      /**
-       * POST /api/routes/analyze
-       * Body: JSON { source: { lat, lng }, destination: { lat, lng } }
-       * Auth: Bearer token
-       */
+      const source = await geocodeAddress(srcText);
+      const destination = await geocodeAddress(dstText);
+
       const res = await fetch(`${API_URL}/api/routes/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${DEV_JWT}`,
         },
-        body: JSON.stringify({
-          source: { lat: parseFloat(srcLat), lng: parseFloat(srcLng) },
-          destination: { lat: parseFloat(dstLat), lng: parseFloat(dstLng) },
-        }),
+        body: JSON.stringify({ source, destination }),
       });
 
       if (!res.ok) {
@@ -161,7 +157,7 @@ export default function RouteAIPage() {
               Route Coordinates
             </CardTitle>
             <CardDescription>
-              Enter source and destination GPS coordinates to get an AI safety analysis
+              Enter source and destination addresses to get an AI safety analysis
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -190,21 +186,12 @@ export default function RouteAIPage() {
                     Use my location
                   </Button>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1">
                   <Input
-                    type="number"
-                    step="any"
-                    placeholder="Latitude"
-                    value={srcLat}
-                    onChange={(e) => setSrcLat(e.target.value)}
-                    required
-                  />
-                  <Input
-                    type="number"
-                    step="any"
-                    placeholder="Longitude"
-                    value={srcLng}
-                    onChange={(e) => setSrcLng(e.target.value)}
+                    type="text"
+                    placeholder="Enter an address (e.g. City Center)"
+                    value={srcText}
+                    onChange={(e) => setSrcText(e.target.value)}
                     required
                   />
                 </div>
@@ -223,21 +210,12 @@ export default function RouteAIPage() {
                   <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
                   Destination Location
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1">
                   <Input
-                    type="number"
-                    step="any"
-                    placeholder="Latitude"
-                    value={dstLat}
-                    onChange={(e) => setDstLat(e.target.value)}
-                    required
-                  />
-                  <Input
-                    type="number"
-                    step="any"
-                    placeholder="Longitude"
-                    value={dstLng}
-                    onChange={(e) => setDstLng(e.target.value)}
+                    type="text"
+                    placeholder="Enter destination address"
+                    value={dstText}
+                    onChange={(e) => setDstText(e.target.value)}
                     required
                   />
                 </div>

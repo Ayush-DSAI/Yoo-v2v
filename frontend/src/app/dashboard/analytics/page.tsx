@@ -59,6 +59,7 @@ export default function AnalyticsPage() {
         headers: {
           Authorization: `Bearer ${DEV_JWT}`,
         },
+        cache: 'no-store',
       });
       if (!res.ok) throw new Error(`Server responded with ${res.status}`);
       const json: AnalyticsData = await res.json();
