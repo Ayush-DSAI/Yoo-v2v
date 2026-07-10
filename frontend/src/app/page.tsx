@@ -68,7 +68,7 @@ export default function HomePage() {
               <div className="pt-4">
                 <Link href="/register">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-8 py-6 text-lg font-bold shadow-lg transition-all transform hover:-translate-y-1">
-                    Start Your Free Trial
+                    Start Your Journey
                   </Button>
                 </Link>
               </div>
